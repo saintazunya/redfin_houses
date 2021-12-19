@@ -150,7 +150,8 @@ class HouseFilter(object):
                  min_lot_size: LotEnum = None,
                  max_lot_size: LotEnum = None,
                  max_hoa: HOAEnum = None,
-                 open_house: OpenHouseEnum = None):
+                 open_house: OpenHouseEnum = None,
+                 sold: bool = False):
         self._check_and_set(list, '_property_type_list', property_type_list, list())
         self._check_and_set(PriceEnum,'_min_price',min_price)
         self._check_and_set(PriceEnum, '_max_price',max_price)
@@ -162,10 +163,12 @@ class HouseFilter(object):
         self._check_and_set(int, '_min_year_built', min_year_built)
         self._check_and_set(int, '_max_year_built', max_year_built)
         self._check_and_set(bool, '_has_garage', has_garage)
+
         self._check_and_set(LotEnum, '_min_lot_size', min_lot_size)
         self._check_and_set(LotEnum, '_max_lot_size', max_lot_size)
         self._check_and_set(HOAEnum, '_max_hoa', max_hoa)
         self._check_and_set(OpenHouseEnum, '_open_house', open_house)
+        self._check_and_set(bool, "_sold", sold)
 
     def _check_and_set(self,
                        property_cls,
@@ -176,6 +179,10 @@ class HouseFilter(object):
                                                     property_cls)
         setattr(self, property_name, property_value
                 if property_value else default_value)
+
+    @property
+    def sold(self) -> bool:
+        return self._sold
 
     @property
     def property_type_list(self) -> list:
@@ -270,4 +277,6 @@ class HouseFilter(object):
             l.append('hoa=' + str(self.max_hoa.value))
         if self.open_house:
             l.append('open-house=' + str(self.open_house.value))
+        if self.sold:
+            l.append('include=sold-6mo')
         return 'filter/' + ','.join(l) if l else ''
